@@ -8,8 +8,9 @@
   "plugin": {
     "id": "bootcamp",
     "server": true,
-    "browser": false,
+    "browser": true,
     "configPath": ["xpack", "bootcamp"],
-    "optionalPlugins": ["features"]
+    "optionalPlugins": ["features"],
+    "requiredBundles": ["kibanaReact"]
   }
 }
