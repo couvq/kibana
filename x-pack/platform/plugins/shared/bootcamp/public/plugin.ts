@@ -6,21 +6,24 @@
  */
 
 import type { AppMountParameters } from '@kbn/core/public';
-import {
-  DEFAULT_APP_CATEGORIES,
-  type CoreSetup,
-  type CoreStart,
-  type Plugin,
-} from '@kbn/core/public';
+import { DEFAULT_APP_CATEGORIES, type CoreStart } from '@kbn/core/public';
 import type {
+  BootcampClientCoreSetup,
+  BootcampClientPluginClass,
   BootcampPublicPluginSetup,
   BootcampPublicPluginStart,
   BootcampPublicSetup,
-  BootcampPublicStart,
 } from './types';
+import { BootcampDashboardsService } from './services/bootcamp_dashboards_service';
+import { BootcampLocator } from '../common/locator';
 
-export class BootcampPlugin implements Plugin {
-  setup(coreSetup: CoreSetup, plugins: BootcampPublicPluginSetup): BootcampPublicSetup {
+export class BootcampPlugin implements BootcampClientPluginClass {
+  setup(
+    coreSetup: BootcampClientCoreSetup,
+    plugins: BootcampPublicPluginSetup
+  ): BootcampPublicSetup {
+    plugins.share.url.locators.create(new BootcampLocator());
+
     coreSetup.application.register({
       id: 'bootcamp',
       title: 'Bootcamp',
@@ -29,14 +32,20 @@ export class BootcampPlugin implements Plugin {
       euiIconType: 'logoObservability',
       async mount(params: AppMountParameters) {
         const { renderApp } = await import('./application');
-        const [coreStart, pluginsStart] = await coreSetup.getStartServices();
-        return renderApp(coreStart, pluginsStart, params);
+        const [coreStart, pluginsStart, myServices] = await coreSetup.getStartServices();
+
+        return renderApp(coreStart, pluginsStart, myServices, params);
       },
     });
+
     return {};
   }
 
-  start(coreStart: CoreStart, plugins: BootcampPublicPluginStart): BootcampPublicStart {
-    return {};
+  start(coreStart: CoreStart, plugins: BootcampPublicPluginStart) {
+    const dashboardsService = new BootcampDashboardsService(coreStart.http);
+
+    return {
+      dashboardsService,
+    };
   }
 }

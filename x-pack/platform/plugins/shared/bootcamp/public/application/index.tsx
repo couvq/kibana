@@ -6,22 +6,28 @@
  */
 
 import type { AppMountParameters, CoreStart } from '@kbn/core/public';
-import { Router } from '@kbn/shared-ux-router';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BootcampAppContextProvider } from '../hooks/use_kibana';
-import type { BootcampPublicPluginStart } from '../types';
+import { Router } from '@kbn/shared-ux-router';
 import { BootcampApp } from './bootcamp_app';
+import type { BootcampPublicPluginStart, BootcampPublicStart } from '../types';
+import { BootcampAppContextProvider } from '../hooks/use_kibana';
 
-export const renderApp = (
+export function renderApp(
   coreStart: CoreStart,
   pluginsStart: BootcampPublicPluginStart,
+  myServices: BootcampPublicStart,
   params: AppMountParameters
-) => {
+) {
   const { element, history } = params;
 
   ReactDOM.render(
-    <BootcampAppContextProvider coreStart={coreStart} pluginsStart={pluginsStart} params={params}>
+    <BootcampAppContextProvider
+      coreStart={coreStart}
+      pluginsStart={pluginsStart}
+      params={params}
+      myServices={myServices}
+    >
       <Router history={history}>
         <BootcampApp />
       </Router>
@@ -29,5 +35,7 @@ export const renderApp = (
     element
   );
 
-  return () => ReactDOM.unmountComponentAtNode(element);
-};
+  return () => {
+    ReactDOM.unmountComponentAtNode(element);
+  };
+}

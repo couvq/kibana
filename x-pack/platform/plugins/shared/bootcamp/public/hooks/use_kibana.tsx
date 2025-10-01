@@ -10,34 +10,43 @@ import {
   KibanaContextProvider,
   useKibana as useUntypedKibana,
 } from '@kbn/kibana-react-plugin/public';
-import type { PropsWithChildren } from 'react';
-import React, { useMemo } from 'react';
-import type { BootcampPublicPluginStart } from '../types';
+import { useMemo, type PropsWithChildren } from 'react';
+import React from 'react';
+import type { BootcampPublicPluginStart, BootcampPublicStart } from '../types';
 
-interface BootcampKibanaContext {
+export interface BootcampKibanaContext {
   core: CoreStart;
   plugins: BootcampPublicPluginStart;
   params: AppMountParameters;
+  myServices: BootcampPublicStart;
 }
 
-export const useKibana = () => {
+export function useKibana(): BootcampKibanaContext {
   return useUntypedKibana<BootcampKibanaContext>().services;
-};
+}
 
 interface BootcampAppContextProviderProps {
   coreStart: CoreStart;
-  pluginStart: BootcampPublicPluginStart;
+  pluginsStart: BootcampPublicPluginStart;
   params: AppMountParameters;
+  myServices: BootcampPublicStart;
 }
 
-export const BootcampAppContextProvider = ({
+export function BootcampAppContextProvider({
   children,
   coreStart,
-  pluginStart,
+  pluginsStart,
   params,
-}: PropsWithChildren<BootcampAppContextProviderProps>) => {
+  myServices,
+}: PropsWithChildren<BootcampAppContextProviderProps>) {
   const servicesForContext = useMemo(() => {
-    return { core: coreStart, plugins: pluginStart, params };
-  }, [coreStart, pluginStart, params]);
+    return {
+      core: coreStart,
+      plugins: pluginsStart,
+      params,
+      myServices,
+    };
+  }, [coreStart, pluginsStart, params, myServices]);
+
   return <KibanaContextProvider services={servicesForContext}>{children}</KibanaContextProvider>;
-};
+}

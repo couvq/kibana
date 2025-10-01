@@ -5,8 +5,11 @@
  * 2.0.
  */
 
-import { BootcampPlugin } from './plugin';
+import React from 'react';
 
-export function plugin() {
-  return new BootcampPlugin();
+export function DashboardPage() {
+  return <h2>DashboardPage</h2>;
 }
+
+// eslint-disable-next-line import/no-default-export
+export default DashboardPage;

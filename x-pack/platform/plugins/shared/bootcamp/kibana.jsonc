@@ -10,6 +10,7 @@
     "server": true,
     "browser": true,
     "configPath": ["xpack", "bootcamp"],
+    "requiredPlugins": ["share"],
     "optionalPlugins": ["features"],
     "requiredBundles": ["kibanaReact"]
   }
